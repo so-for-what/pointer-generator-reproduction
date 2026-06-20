@@ -29,7 +29,7 @@ training:
 data:
   dataset: "cnn_dailymail"
   subset: "3.0.0"
-  max_train_articles: 0  # 0 means all
+  max_train_articles: 50000  # subset for faster training
   max_val_articles: 10000
   max_test_articles: 10000
   tokenizer: "word"  # "word" or "bpe"

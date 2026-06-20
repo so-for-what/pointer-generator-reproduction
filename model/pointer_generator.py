@@ -240,8 +240,25 @@ class PointerGenerator(nn.Module):
                     coverage if self.coverage else None
                 )
 
-                # Final distribution (simplified: vocab only for greedy)
-                token = vocab_dist.argmax(dim=-1)
+                # Final distribution: combine vocab + copy
+                # Final distribution: combine vocab + copy
+                copy_vocab = torch.zeros_like(vocab_dist)  # (1, vocab_size)
+                src_tokens = enc_input[0]  # (src_len,)
+                for pos in range(enc_input.size(1)):
+                    tid = src_tokens[pos].item()
+                    if tid < vocab_dist.size(1):
+                        copy_vocab[0, tid] += attn_dist[0, pos]
+                final_dist = p_gen * vocab_dist + (1 - p_gen) * copy_vocab
+
+                # Avoid UNK at inference: if UNK is top, use copy instead
+                token = final_dist.argmax(dim=-1)
+                if token.item() == self.unk_id:
+                    # Fall back to highest probability from copy distribution
+                    copy_vocab[:, self.sos_id] = 0
+                    copy_vocab[:, self.pad_id] = 0
+                    copy_vocab[:, self.eos_id] = 0
+                    copy_vocab[:, self.unk_id] = 0
+                    token = copy_vocab.argmax(dim=-1)
 
                 if token.item() == self.eos_id:
                     break
