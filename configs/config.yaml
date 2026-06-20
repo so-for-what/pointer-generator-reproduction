@@ -18,7 +18,7 @@ model:
 
 training:
   batch_size: 16
-  epochs: 5
+  epochs: 2
   lr: 0.0005
   max_grad_norm: 2.0
   checkpoint_dir: "checkpoints/"
