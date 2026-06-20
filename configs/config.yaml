@@ -1,0 +1,44 @@
+# Training configuration
+model:
+  name: "pointer_generator"
+  encoder: "lstm"  # "lstm" or "transformer"
+  embedding_dim: 256
+  hidden_dim: 512
+  lstm_layers: 2
+  lstm_dropout: 0.3
+  transformer_layers: 2
+  transformer_heads: 4
+  transformer_ff_dim: 1024
+  transformer_dropout: 0.1
+  coverage: true
+  max_dec_steps: 120
+  max_enc_steps: 400
+  beam_size: 4
+  vocab_size: 50000
+
+training:
+  batch_size: 16
+  epochs: 5
+  lr: 0.0005
+  max_grad_norm: 2.0
+  checkpoint_dir: "checkpoints/"
+  log_interval: 100
+  eval_interval: 500
+  save_interval: 1000
+
+data:
+  dataset: "cnn_dailymail"
+  subset: "3.0.0"
+  max_train_articles: 0  # 0 means all
+  max_val_articles: 10000
+  max_test_articles: 10000
+  tokenizer: "word"  # "word" or "bpe"
+
+paths:
+  log_dir: "logs/"
+  output_dir: "outputs/"
+
+eval:
+  rouge_types: ["rouge1", "rouge2", "rougeL"]
+  use_beam: true
+  beam_size: 4
